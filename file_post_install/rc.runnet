@@ -1,0 +1,10 @@
+#!/usr/bin/sh
+
+# Divergent configuration
+
+ip link set dev eth1 up
+ip addr add 10.133.133.NUM/24 brd + dev eth1
+
+ip link set dev eth2 up
+ip addr add 192.168.32.NUM/24 brd + dev eth2
+

@@ -1,0 +1,41 @@
+#!/usr/bin/bash
+
+CLUSTER_STATE_FILE="/var/lib/postgresql16/data/cls_state.shared"
+
+function show_help() {
+    echo "Cluster Manager Utility"
+    echo "Usage: cluster_manager <COMMAND>"
+    echo ""
+    echo "Commands:"
+    echo "  stop       - Safely stop the cluster"
+    echo "  start      - Reset cluster state to START"
+    echo "  -h, --help - Show this help message"
+}
+
+function set_cluster_state() {
+    local NEW_STATE="$1"
+    if [[ ! -w "$CLUSTER_STATE_FILE" ]]; then
+        echo "ERROR: File $CLUSTER_STATE_FILE not writable"
+        exit 1
+    fi
+    echo "$NEW_STATE" > "$CLUSTER_STATE_FILE"
+    chown postgres:postgres "$CLUSTER_STATE_FILE"
+    echo "INFO: Cluster state set to $NEW_STATE"
+}
+
+if [[ $# -lt 1 ]]; then
+    show_help
+    exit 1
+fi
+
+case "$1" in
+    stop) set_cluster_state "STOP" ;;
+    start) set_cluster_state "START" ;;
+    -h|--help) show_help ;;
+    *)
+        show_help
+        echo "ERROR: Unknown command. Use -h or --help for assistance"
+        exit 1 ;;
+esac
+
+exit 0

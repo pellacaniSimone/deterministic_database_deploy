@@ -1,0 +1,20 @@
+# Divergent configuration
+
+name: prodVoidPGclsNUM
+data-dir: /var/lib/etcd
+
+# Listen for client requests on private network
+listen-client-urls: http://10.133.133.NUM:2379
+advertise-client-urls: http://10.133.133.NUM:2379
+
+# Node communication configuration
+initial-advertise-peer-urls: http://10.133.133.NUM:2380
+listen-peer-urls: http://10.133.133.NUM:2380
+
+# Cluster token and state
+initial-cluster-token: prodVoidPGcls
+initial-cluster-state: new
+
+# Peer configuration in cluster
+initial-cluster: LISTA_NODI
+
