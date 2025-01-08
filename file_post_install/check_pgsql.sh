@@ -34,11 +34,14 @@ function postgresql_running_status() {
         pg_switch_state status
         return $? # 0 master, 3 slave
     fi
-    if [[ -f "$PG_MASTER" ]]; then 
+    if [[ -f "$PG_MASTER" ]]; then  # Master rump up
+        chown -R postgres:postgres /var/lib/postgresql16/data
+        chown postgres:postgres /tmp
         return 2 # Master rump up
     fi
     return 1 # Cluster all down (no pg_pidfile and no pg_master)
 }
+
 
 # Change cluster running state
 function mod_cls_state() {
