@@ -91,6 +91,27 @@ The project consists of several key files and directories:
 - [ ] Implement a script to automate the replace of the hostname across all project files.
 - [ ] Write a YouTube video documentation.
 - [ ] Create a script to automate the update of the front-end IP address in configuration files.
+- [ ] Add gracefully start and stop with something like function below, do it manually for each node in events like migrations.
+
+```sh
+# Stopping safetely
+function secure_stop() {
+    pg_switch_state stop && \
+    sv stop keepalived && \
+    umount $PG_DATA && \
+    sv stop etcd
+}
+
+# Starting safetely
+function secure_start() {
+    sv start etcd && sleep 1 && sv status etcd && \
+    mount $PG_DATA && \
+    sv stop keepalived && \
+    pg_switch_state start
+}
+
+```
+
 
 
 # Visualization schema

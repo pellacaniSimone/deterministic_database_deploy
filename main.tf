@@ -147,9 +147,18 @@ resource "null_resource" "set_authorized_keys" {
 }
 
 
+resource "null_resource" "sshd_restart" {
+  count = var.container_count
+  depends_on = [null_resource.set_authorized_keys]
+  provisioner "local-exec" {
+    command = "ssh -o StrictHostKeyChecking=no root@${var.endpoint}  pct exec  ${data.external.get_vmid[count.index].result.vmid} -- sv restart sshd "
+  }
+}
+
+
 resource "null_resource" "create_file" {
   count      = var.container_count
-  depends_on = [null_resource.set_authorized_keys] 
+  depends_on = [null_resource.sshd_restart] 
   provisioner "local-exec" {
     command = "ssh -o StrictHostKeyChecking=no root@${var.endpoint}  touch /tmp/variabile_count/${var.container_count} "
   }
@@ -167,7 +176,7 @@ resource "null_resource" "move_files" {
   count      = var.container_count
   depends_on = [null_resource.push_count] 
   provisioner "local-exec" {
-    command = "scp -o StrictHostKeyChecking=no ./file_post_install/* root@${var.hostname}${count.index + 1}.local.lan:/root/"
+    command = "sleep 2 && scp -o StrictHostKeyChecking=no ./file_post_install/* root@${var.hostname}${count.index + 1}.local.lan:/root/"
   }
 }
 

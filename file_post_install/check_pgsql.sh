@@ -35,7 +35,7 @@ function postgresql_running_status() {
         return $? # 0 master, 3 slave
     fi
     if [[ -f "$PG_MASTER" ]]; then  # Master rump up
-        chown -R postgres:postgres /var/lib/postgresql16/data
+        chown -R postgres:postgres  $PG_DATA
         chown postgres:postgres /tmp
         return 2 # Master rump up
     fi
@@ -80,7 +80,7 @@ function check_cluster_state() {
                 0)   echo "INFO: Master started, state ok."
                      exit 0 ;;
                 1)   echo "INFO: Non-compliant state, Cluster all Down, wanted Start."
-                     exit 1 ;;
+                     exit 0 ;; # pass to rump up
                 2)   echo "INFO: Starting master in START state."
                      pg_switch_state start
                      exit 0 ;;
